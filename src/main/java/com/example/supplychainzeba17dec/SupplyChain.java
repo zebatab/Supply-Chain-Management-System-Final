@@ -3,14 +3,15 @@ package com.example.supplychainzeba17dec;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -50,8 +51,11 @@ public class SupplyChain extends Application {
         customerEmailLabel = new Label("Welcome User");
 
         GridPane gridPane = new GridPane();
+        //gridPane.setMinSize(bodyPane.getMinWidth(), bodyPane.getMinHeight());
         gridPane.setVgap(5);
         gridPane.setHgap(5);
+        gridPane.setAlignment(Pos.CENTER);
+        //gridPane.setStyle("-fx-background-color: #746AB0");
 
         gridPane.add(searchText, 0, 0);
         gridPane.add(searchButton, 1, 0);
@@ -92,7 +96,7 @@ public class SupplyChain extends Application {
         gridPane.setVgap(5);
         gridPane.setHgap(5);
 
-       // gridPane.setStyle("-fx-background-color: #C0C0C0");
+        gridPane.setStyle("-fx-background-color: #C0C0C0");
         gridPane.setAlignment(Pos.CENTER);
 
         gridPane.add(emailLabel, 0,0);
@@ -105,15 +109,53 @@ public class SupplyChain extends Application {
         return gridPane;
     }
 
+    private GridPane footerBar(){
+
+        Button addToCartButton = new Button("Add to Cart");
+        Button buyNowButton = new Button("Buy Now");
+        Label messageLabel = new Label();
+        buyNowButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                Product selectedProduct = productDetails.getSelectedProduct();
+                if(Order.placeOrder(customerEmail, selectedProduct)){
+                    messageLabel.setText("Ordered");
+                }else{
+                    messageLabel.setText("Order Failed");
+                }
+            }
+        });
+
+        GridPane gridPane = new GridPane();
+
+        //gridPane.setBackground(new Background(new BackgroundFill(Color.rgb(140,200,140), new CornerRadii(0), new Insets(0))));
+        gridPane.setVgap(5);
+        gridPane.setHgap(50);
+        //gridPane.setStyle("-fx-background-color: #746AB0");
+        //gridPane.setPrefSize(200,200);
+
+        gridPane.relocate(10, 10);
+
+        gridPane.setAlignment(Pos.CENTER);
+        gridPane.setTranslateY(headerBar+height+5);
+
+        gridPane.add(addToCartButton, 0, 0);
+        gridPane.add(buyNowButton, 1, 0);
+        gridPane.add(messageLabel,2,0);
+
+        return gridPane;
+    }
+
+
     private Pane createContent(){
         Pane root = new Pane();
-        root.setPrefSize(width, height+headerBar);
+        root.setPrefSize(width, height+2*headerBar+10);
         bodyPane.setMinSize(width, height);
         bodyPane.setTranslateY(headerBar);
 
         bodyPane.getChildren().addAll(productDetails.getAllProducts());
 
-        root.getChildren().addAll(headerBar(), bodyPane);
+        root.getChildren().addAll(headerBar(), bodyPane, footerBar());
 
         return root;
     }
